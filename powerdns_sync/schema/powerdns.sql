@@ -1,7 +1,7 @@
 -- # Our versioning table
 DROP TABLE IF EXISTS powerdns_schemaversion;
 CREATE TABLE powerdns_schemaversion (version INT);
-INSERT INTO powerdns_schemaversion VALUES (12);
+INSERT INTO powerdns_schemaversion VALUES (13);
 
 -- MySQL dump 10.13  Distrib 5.1.41, for debian-linux-gnu (x86_64)
 --
@@ -182,8 +182,8 @@ SELECT
   `c`.`active` AS `active`,
   `c`.`content` AS `content`
 FROM (
-  `powerdns`.`domains` `d`
-  JOIN `powerdns`.`global_cryptokeys` `c`
+  `domains` `d`
+  JOIN `global_cryptokeys` `c`
 )
 WHERE `d`.`type` IN ('NATIVE', 'MASTER')
 */;

@@ -202,7 +202,7 @@ CREATE TABLE comments (
 
 			if [ "$schema_version" -lt 13 ]; then
 				execute_query "
-ALTER VIEW powerdns.cryptokeys AS
+ALTER VIEW cryptokeys AS
   SELECT
     c.id AS id,
     d.id AS domain_id,
@@ -210,8 +210,8 @@ ALTER VIEW powerdns.cryptokeys AS
     c.active AS active,
     c.content AS content
   FROM (
-    powerdns.domains d
-    JOIN powerdns.global_cryptokeys c
+    domains d
+    JOIN global_cryptokeys c
   )
   WHERE d.type IN ('NATIVE', 'MASTER')"
 			fi
