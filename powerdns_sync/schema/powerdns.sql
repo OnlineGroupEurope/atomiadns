@@ -1,7 +1,7 @@
 -- # Our versioning table
 DROP TABLE IF EXISTS powerdns_schemaversion;
 CREATE TABLE powerdns_schemaversion (version INT);
-INSERT INTO powerdns_schemaversion VALUES (13);
+INSERT INTO powerdns_schemaversion VALUES (14);
 
 -- MySQL dump 10.13  Distrib 5.1.41, for debian-linux-gnu (x86_64)
 --
@@ -64,6 +64,8 @@ CREATE TABLE `outbound_tsig_keys` (
   `domain_id` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `secret` varchar(255) DEFAULT NULL,
+  `algorithm` varchar(16) DEFAULT 'hmac-md5' NOT NULL,
+  `add_prefix` bool NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`),
   KEY `domain_index` (`domain_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
@@ -85,7 +87,8 @@ CREATE TABLE `domains` (
   `notified_serial` int(11) DEFAULT NULL,
   `account` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name_index` (`name`)
+  UNIQUE KEY `name_index` (`name`),
+  KEY `type_index` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -140,7 +143,8 @@ CREATE TABLE `records` (
   PRIMARY KEY (`id`),
   KEY `nametype_index` (`name`,`type`),
   KEY `domain_id` (`domain_id`),
-  KEY `recordorder` (`domain_id`,`ordername`)
+  KEY `recordorder` (`domain_id`,`ordername`),
+  KEY `type_index` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -227,7 +231,13 @@ WHERE d.type IN ('NATIVE', 'MASTER', 'SLAVE')
 
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `tsigkeys` AS select CONCAT('key', k.id, ':', LOWER(k.name)) AS name, 'hmac-md5' AS algorithm, k.secret from outbound_tsig_keys k */;
+/*!50001 VIEW `tsigkeys` AS 
+SELECT
+  IF(`add_prefix`, CONCAT('key', `id`, ':', LOWER(`name`)), `name`) AS `name`,
+  `algorithm`,
+  `secret`
+FROM `outbound_tsig_keys`
+*/;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

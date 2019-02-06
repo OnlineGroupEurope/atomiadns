@@ -57,6 +57,7 @@ Atomia DNS PowerDNS Sync application.
 /usr/share/atomia/opendnssec_scripts
 /usr/share/atomia/powerdns.sql
 /etc/systemd/system/atomiadns-powerdnssync.service
+/etc/systemd/system/atomiadns-powerdnssync-event.service
 %{perl_vendorlib}/Atomia/DNS/PowerDNSSyncer.pm
 %{perl_vendorlib}/Atomia/DNS/PowerDNSDatabase.pm
 %doc %{_mandir}/man1/atomiapowerdnssync.1.gz

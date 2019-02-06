@@ -120,7 +120,7 @@ if [ $showdb_ret = 0 ] && [ -n "$db_exists" ]; then
 			exit 1
 		fi
 	else
-		latest_version="13"
+		latest_version="14"
 
 		if [ "$schema_version" = "$latest_version" ]; then
 			echo "The installed schema is the latest version ($latest_version), keeping the database as it is."
@@ -215,6 +215,20 @@ ALTER VIEW cryptokeys AS
   )
   WHERE d.type IN ('NATIVE', 'MASTER')"
 			fi
+
+			if [ "$schema_version" -lt 14 ]; then
+				execute_query "CREATE INDEX type_index ON domains(type)"
+				execute_query "CREATE INDEX type_index ON records(type)"
+				execute_query "ALTER TABLE outbound_tsig_keys ADD algorithm VARCHAR(16) DEFAULT 'hmac-md5' NOT NULL"
+				execute_query "ALTER TABLE outbound_tsig_keys ADD add_prefix BOOL DEFAULT TRUE NOT NULL"
+				execute_query "
+ALTER VIEW tsigkeys AS
+  SELECT
+    IF(add_prefix, CONCAT('key', id, ':', LOWER(name)), name) AS name,
+	algorithm,
+	secret
+  FROM outbound_tsig_keys"
+            fi
 
 			set_schema_version "$latest_version"
 		else
