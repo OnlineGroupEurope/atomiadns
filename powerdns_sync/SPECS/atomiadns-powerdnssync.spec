@@ -40,6 +40,7 @@ Atomia DNS PowerDNS Sync application.
 %{__mkdir} -p %{buildroot}/etc/systemd
 %{__mkdir} -p %{buildroot}/etc/systemd/system
 %{__cp} debian/atomiadns-powerdnssync.atomiadns-powerdnssync.service %{buildroot}/etc/systemd/system/atomiadns-powerdnssync.service
+%{__cp} debian/atomiadns-powerdnssync.atomiadns-powerdnssync-event.service %{buildroot}/etc/systemd/system/atomiadns-powerdnssync-event.service
 %{__mkdir} -p %{buildroot}/usr/share/atomia/conf
 %{__cp} conf/atomiadns.conf.atomiapowerdnssync %{buildroot}/usr/share/atomia/conf/
 %{__mkdir} -p %{buildroot}/usr/share/atomia/opendnssec_scripts

@@ -243,6 +243,30 @@ SWITCH: {
 		last SWITCH;
 	};
 
+	/^eventchain$/i && do {
+		FOREVER: while(1) {
+			eval {
+				my $syncer = Atomia::DNS::PowerDNSSyncer->new(configfile => "/etc/atomiadns.conf");
+
+				while (1) {
+					last if $syncer->updates_disabled();
+					$syncer->event_chain();
+					sleep 10;
+				}
+			};
+
+			if ($@) {
+				print "caught exception in atomiadnssync eventchain: $@\n";
+				sleep 5;
+			} else {
+				# Updates disabled, exit.
+				last;
+			}
+		}
+
+		last SWITCH;
+	};
+
 	die("parameter $_ is not supported");
 }
 

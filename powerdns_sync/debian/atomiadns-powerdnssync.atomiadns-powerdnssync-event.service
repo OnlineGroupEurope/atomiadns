@@ -1,0 +1,12 @@
+[Unit]
+Description=Atomia DNS PowerDNS sync event chain
+Wants=atomiadns-powerdnssync.service
+After=atomiadns-powerdnssync.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/atomiapowerdnssync eventchain 2>&1 | logger -t atomiapowerdnssync_eventchain
+
+[Install]
+WantedBy=multi-user.target
+
