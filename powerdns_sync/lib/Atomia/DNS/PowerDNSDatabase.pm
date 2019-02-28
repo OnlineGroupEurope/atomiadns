@@ -277,18 +277,18 @@ sub set_dnssec_metadata {
 
 	eval {
 		if (defined($presigned) && $presigned && !$db_is_presigned) {
-			$self->dbi->do("DELETE FROM global_domainmetadata");
+			$self->dbi->do("DELETE FROM global_domainmetadata WHERE kind IN ('PRESIGNED', 'SOA-EDIT', 'NSEC3PARAM', 'NSEC3NARROW', 'ALSO-NOTIFY')");
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('PRESIGNED', '1')");
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('ALSO-NOTIFY', '$also_notify')") unless $also_notify eq '';
 			$self->dbi->commit();
 		} elsif (defined($presigned) && !$presigned && !$db_correct_nsec) {
-			$self->dbi->do("DELETE FROM global_domainmetadata");
+			$self->dbi->do("DELETE FROM global_domainmetadata WHERE kind IN ('PRESIGNED', 'SOA-EDIT', 'NSEC3PARAM', 'NSEC3NARROW', 'ALSO-NOTIFY')");
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('SOA-EDIT', 'INCEPTION-EPOCH')");
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('NSEC3PARAM', '1 1 " . $self->nsec3_iterations . " " . $self->nsec3_salt_pres . "')") if $nsec_type ne 'NSEC';
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('NSEC3NARROW', '1')") if $nsec_type eq 'NSEC3NARROW';
 			$self->dbi->commit();
 		} elsif (!defined($presigned) && !$db_correct_notify) {
-			$self->dbi->do("DELETE FROM global_domainmetadata");
+			$self->dbi->do("DELETE FROM global_domainmetadata WHERE kind IN ('PRESIGNED', 'SOA-EDIT', 'NSEC3PARAM', 'NSEC3NARROW', 'ALSO-NOTIFY')");
 			$self->dbi->do("INSERT INTO global_domainmetadata (kind, content) VALUES ('ALSO-NOTIFY', '$also_notify')") unless $also_notify eq '';
 		}
 	};
